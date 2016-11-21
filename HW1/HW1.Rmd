@@ -1,0 +1,74 @@
+```{r}
+college <-read.csv('C:/Users/ganapane/Documents/Sagar/Stanford/STATS 202/Assignments/HW1/College.csv',
+                   header=TRUE)
+
+```
+
+```{r}
+head (college)
+
+rownames (college )=college [,1]
+
+college =college [,-1]
+
+summary(college)
+
+```
+
+```{r}
+pairs(college[, 1:10], main='Scatter plot')
+
+
+```
+
+```{r}
+plot(college$Private, college$Outstate, xlab = "Private University", ylab ="Out of State tuition($)", main = "Out Station Tuition vs College Type")
+
+
+```
+
+
+```{r}
+college$Elite<-'No'
+college[college$Top10perc > 50,]$Elite<-'Yes'
+college$Elite<- as.factor(college$Elite)
+
+summary(college$Elite)
+
+```
+
+```{r}
+plot(college$Elite, college$Outstate, xlab = "Elite University", ylab ="Out of State tuition($)", main = "Outstate Tuition Plot vs Elite Status")
+
+```
+```{r}
+par(mfrow = c(2,2))
+hist(college$Expend, col = 'red', xlab = "Expenditure", ylab = "Count", main='Histogram for Expenditure')
+hist(college$PhD, col = 'blue', xlab = "PhD", ylab = "Count",main='Histogram for Phd')
+hist(college$Grad.Rate, col = 'green', xlab = "Grad Rate", ylab = "Count",main='Histogram for Grad Rate')
+hist(college$perc.alumni, col = 'orange', xlab = "% alumni", ylab = "Count",main='Histogram for % Alumni')
+
+
+```
+```{r}
+college$Elite<-'No'
+college[college$Top10perc > 50,]$Elite<-'Yes'
+college$Elite<- as.factor(college$Elite)
+summary(college$Elite)
+
+```
+```{r}
+gradrate_100plus<-subset(college, Grad.Rate>100)
+rownames(gradrate_100plus)
+
+```
+
+```{r}
+plot(college$Elite, college$Grad.Rate, xlab = "Elite University", ylab ="Graduate Rate(%)", main = "Graduation Rate Vs Elite Status")
+
+```
+```{r}
+college$acceptance_rate <- (college$Accept/college$Apps)*100
+plot(college$Elite, college$acceptance_rate, xlab = "Elite University", ylab ="Acceptance Rate(%)", main = "Acceptance Rate Vs Elite Status")
+
+```
