@@ -1,0 +1,141 @@
+---
+title: "HW4p5"
+author: "Sagar Ganapaneni"
+date: "October 27, 2016"
+output: word_document
+---
+
+(a) Using the USArrests dataset, plot a histogram of the proportion of variance explained by the first 2 principal components in 1000 Bootstrap resamplings of the data.
+```{r}
+## Load data
+library(ISLR)
+attach(USArrests)
+set.seed(12)
+PC12_prop <- numeric(1000)
+for(i in 1:1000){
+  ## sample USArrest
+  split = sample(1:nrow(USArrests), size=nrow(USArrests)/2)
+  USArrest_boot <- USArrests[split, ]
+  ## do PCA 
+  PCA_USArrests <- prcomp(USArrest_boot,center = TRUE,scale. = TRUE)
+
+  ## Explnation by first two PCS
+  PC_variance<- PCA_USArrests$sdev^2
+  PC_var_prop <- PC_variance/sum(PC_variance)
+  PC12_prop[i] <- (PC_var_prop[1]+PC_var_prop[2])*100
+}
+
+hist(PC12_prop, 
+     main="Histogram for variance explained by first 2 PCs",
+     ylab="# of Samples ", 
+     xlab=" % of Variance Explained", 
+     border="#c0f292", 
+     col="#92d050",
+     xlim=c(75,100),
+     breaks=25)
+
+```
+(b) Estimate a standard error and 95% confidence intervals for the proportion of variance explained by the first 2 principal components.
+
+```{r}
+# mean
+pc_mean<-mean(PC12_prop)
+# sd
+pc_sd<-sd(PC12_prop)
+# confidance interval
+pc_CI <- c(pc_mean-2*pc_sd,pc_mean+2*pc_sd)
+pc_CI
+
+
+
+```
+
+(c)Suppose we compute the first principal component from each of 1000 Bootstrap resamplings of the data. Using the resulting 1000 vectors, we estimate the standard error of each entry or loading using Eq. 5.8 in the textbook. Explain why this would be problematic.
+
+
+```{r}
+## if the interested statistic is Principal component, then it would be a vector, it would be difficult measure standard devition oa vector component in multi dimensional space.
+```
+(4) There is a way around the problem alluded to in part 3. Write a function in R which, given a data.frame:
+
+Computes the vector of loadings for the first principal component and defines i to be the index of the element with highest absolute value.
+For each of 1000 bootstrap resamplings of the data.frame, computes the vector of loadings for the first principal component and multiplies it by the sign of its ith element to generate signed loadings.
+Plots a boxplot of the signed loadings in the boostrap samples.
+
+
+```{r}
+
+library(ISLR)
+attach(USArrests)
+set.seed(12)
+data<-USArrests
+
+signed_loadings_generator<- function(data){
+    
+    ## initialize output dataframe
+
+    ## loop 1000 times
+    for (n in 1:1000){
+    
+    ## sample data
+    split = sample(1:nrow(data), size=nrow(data)/2)
+    data_boot <- USArrests[split, ]
+    ## do PCA 
+    PCA_data <- prcomp(data_boot,center = TRUE,scale. = TRUE)
+
+    ## PC1
+    pc_1<-PCA_data$rotation[,1]
+    
+    ##  index 
+    i <- which.max(abs(pc_1))
+    
+    ##  sign loading
+    if (pc_1[i]<0) pc_1<- (-pc_1)
+    
+    ## rbind
+    pc_1<-t(as.data.frame(pc_1))
+    if (exists("pc1_loadings")) pc1_loadings<-rbind(pc1_loadings,pc_1)
+    else pc1_loadings<-pc_1
+    }
+  ## plot 
+boxplot(pc1_loadings, main= "boxplot of the signed loadings in the boostrap samples" , col=(c("gold","darkgreen","red","blue")),ylab="signed value" , xlab="elements")
+} 
+
+```
+5. Apply the function to USArrests
+```{r}
+
+signed_loadings_generator(USArrests)
+
+```
+
+```{r}
+```
+
+```{r}
+```
+
+```{r}
+```
+```{r}
+```
+
+```{r}
+```
+
+```{r}
+```
+
+```{r}
+```
+```{r}
+```
+
+```{r}
+```
+
+```{r}
+```
+
+```{r}
+```

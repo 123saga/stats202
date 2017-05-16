@@ -1,0 +1,242 @@
+---
+title: "HW4"
+author: "Sagar Ganapaneni"
+date: "October 27, 2016"
+output: word_document
+---
+
+(a)Fit a logistic regression model that uses "income" and "balance" to predict "default".
+
+```{r}
+library(ISLR)
+attach(Default)
+## set random seed
+set.seed(12)
+glm_model <- glm(default ~ income + balance, data = Default, family = "binomial")
+summary(glm_model)
+
+```
+(b)Using the validation set approach, estimate the test error of this model. In order to do this, you must perform the following steps:
+i. Split the sample set into a training set and a validation set.
+
+```{r}
+## split data
+split = sample(1:nrow(Default), size=nrow(Default)/2)
+Default_train <- Default[split, ]
+Default_test<- Default[-split,]
+
+```
+ii. Fit a multiple logistic regression model using only the training observations.
+
+```{r}
+glm_model <- glm(default ~ income + balance, data = Default_train, family = "binomial")
+summary(glm_model)
+
+```
+iii. Obtain a prediction of default status for each individual in the validation set by computing the posterior probability of default for that individual, and classifying the individual to the "default" category if the posterior probability is greater than 0.5.
+
+```{r}
+
+ods <- predict(glm_model, Default_test, type = "response")
+glm_pred <- rep("No", length(ods))
+glm_pred[ods > 0.5] <- "Yes"
+table(glm_pred, Default_train$default)
+
+```
+```{r}
+mean(glm_pred != Default_train$default)
+
+```
+(c)Repeat the process in (b) three times, using three different splits of the observations into a training set and a validation set. Comment on the results obtained.
+
+```{r}
+# run 1
+split = sample(1:nrow(Default), size=nrow(Default)/2)
+Default_train <- Default[split, ]
+Default_test<- Default[-split,]
+glm_model <- glm(default ~ income + balance, data = Default_train, family = "binomial")
+ods <- predict(glm_model, Default_test, type = "response")
+glm_pred <- rep("No", length(ods))
+glm_pred[ods > 0.5] <- "Yes"
+table(glm_pred, Default_train$default)
+mean(glm_pred != Default_train$default)
+
+```
+```{r}
+# run 2
+split = sample(1:nrow(Default), size=nrow(Default)/2)
+Default_train <- Default[split, ]
+Default_test<- Default[-split,]
+glm_model <- glm(default ~ income + balance, data = Default_train, family = "binomial")
+ods <- predict(glm_model, Default_test, type = "response")
+glm_pred <- rep("No", length(ods))
+glm_pred[ods > 0.5] <- "Yes"
+table(glm_pred, Default_train$default)
+mean(glm_pred != Default_train$default)
+
+```
+```{r}
+# run 3
+split = sample(1:nrow(Default), size=nrow(Default)/2)
+Default_train <- Default[split, ]
+Default_test<- Default[-split,]
+glm_model <- glm(default ~ income + balance, data = Default_train, family = "binomial")
+ods <- predict(glm_model, Default_test, type = "response")
+glm_pred <- rep("No", length(ods))
+glm_pred[ods > 0.5] <- "Yes"
+table(glm_pred, Default_train$default)
+mean(glm_pred != Default_train$default)
+```
+Mention note on different test errors 
+
+(d)Now consider a logistic regression model that predicts the probability of "default" using "income", "balance", and a dummy variable for "student". Estimate the test error for this model using the validation set approach. Comment on whether or not including a dummy variable for "student" leads to a reduction in the test error rate.
+
+```{r}
+## with dummy variable student
+
+split = sample(1:nrow(Default), size=nrow(Default)/2)
+Default_train <- Default[split, ]
+Default_test<- Default[-split,]
+glm_model <- glm(default ~ income + balance+student, data = Default_train, family = "binomial")
+ods <- predict(glm_model, Default_test, type = "response")
+glm_pred <- rep("No", length(ods))
+glm_pred[ods > 0.5] <- "Yes"
+table(glm_pred, Default_train$default)
+mean(glm_pred != Default_train$default)
+```
+
+Problme 3
+(a)Using the summary() and glm() functions, determine the estimated standard errors for the coefficients associated with "income" and "balance" in a multiple logistic regression model that uses both predictors.
+
+
+
+```{r}
+set.seed(12)
+attach(Default)
+glm_model <- glm(default ~ income + balance, data = Default, family = "binomial")
+summary(glm_model)
+```
+
+Talk about coefficnet and standard errors
+
+(b)Write a function, boot.fn(), that takes as input the "Default" data set as well as an index of the observations, and that outputs the coefficient estimates for "income" and "balance" in the multiple logistic regression model.
+
+
+```{r}
+boot.fn <- function(data, split) {
+    glm_model <- glm(default ~ income + balance, data = data, family = "binomial", subset = split)
+    return (coef(glm_model))
+}
+```
+(c)Use the boot() function together with your boot.fn() function to estimate the standard errors of the logistic regression coefficients for "income" and "balance".
+
+```{r}
+library(boot)
+boot(Default, boot.fn, 1000)
+
+```
+Talk about the beetas and SE
+
+
+
+Problem 4:
+
+(a)Based on this data set, provide an estimate for the population mean of "medv".
+```{r}
+
+library(MASS)
+attach(Boston)
+EMu_medv<- mean(medv)
+EMu_medv
+```
+
+(b)Provide an estimate of the standard error of ??^. Interpret this result.
+
+```{r}
+# SE_EMu_mdev <- sd(medv) / sqrt(dim(Boston)[1])
+# SE_EMu_mdev
+```
+
+
+(c)Now estimate the standard error of ??^ using the bootstrap. How does this compare to your answer from (b) ?
+
+```{r}
+library(boot)
+set.seed(12)
+boot.fn <- function(data, split) {
+    EMu <- mean(data[split])
+    return (EMu)
+}
+boot(medv, boot.fn, 1000)
+```
+compare with previous results
+
+(d)Based on your bootstrap estimate from (c), provide a 95% confidence interval for the mean of "medv". Compare it to the results obtained using t.test(Boston$medv).
+
+```{r}
+t.test(medv)
+
+```
+```{r}
+CI_EMu <- c(22.53 - 2 * 0.4119, 22.53 + 2 * 0.4119)
+CI_EMu
+```
+
+(e)Based on this data set, provide an estimate, ??^med, for the median value of "medv" in the population.
+
+```{r}
+EMed_medv <- median(medv)
+EMed_medv
+```
+
+(f)
+We now would like to estimate the standard error of ??^med??^med. Unfortunately, there is no simple formula for computing the standard error of the median. Instead, estimate the standard error of the median using the bootstrap. Comment on your findings.
+
+```{r}
+boot.fn <- function(data, split) {
+    Emedian <- median(data[split])
+    return (Emedian)
+}
+boot(medv, boot.fn, 1000)
+```
+
+(g)Based on this data set, provide an estimate for the tenth percentile of "medv" in Boston suburbs. Call this quantity ??^0.1
+
+
+```{r}
+Mu_10p <- quantile(medv, c(0.1))
+Mu_10p
+```
+(h)Use the bootstrap to estimate the standard error of ??^0.1. Comment on your findings.
+```{r}
+boot.fn <- function(data, split) {
+    mu <- quantile(data[split], c(0.1))
+    return (mu)
+}
+boot(medv, boot.fn, 1000)
+```
+
+```{r}
+```
+
+```{r}
+```
+```{r}
+```
+
+```{r}
+```
+
+```{r}
+```
+```{r}
+```
+
+```{r}
+```
+
+```{r}
+```
+
+
+
