@@ -1,0 +1,210 @@
+---
+title: "HW6"
+author: "Sagar Ganapaneni"
+date: "November 15, 2016"
+output: word_document
+---
+
+
+
+```{r}
+x = -2:2
+y = c(1 + 0 + 0, # x = -2
+      1 + 0 + 0, # x = -1
+      1 + 1 + 0, # x = 0
+      1 + (1-0) + 0, # x = 1
+      1 + (1-1) + 0 # x =2
+      )
+y = x*
+plot(x,y)
+  
+```
+
+problem 3:
+
+```{r}
+set.seed(12)
+library(ISLR)
+library(glmnet)
+library(boot)
+data(Auto)
+summary(Auto)
+pairs(Auto, main='Scatterplot for Auto Data')
+
+```
+Wa may see that "mpg" is negatively correlated to "cylindes", "displacement", "horsepower" and "weight". We begin by performing polynomial regression of "mpg" vs "displacement".
+
+
+Polynomial function
+
+```{r}
+
+MSE <- rep(NA, 15)
+for (i in 1:15) {
+    fit <- glm(mpg ~ poly(displacement, i), data = Auto)
+    MSE[i] <- cv.glm(Auto, fit, K = 10)$delta[1]
+}
+plot(1:15, MSE, xlab = "Degree", ylab = "Test MSE", type = "l", main = "Polynomical Degree vs Test MSE")
+points(which.min(MSE), MSE[which.min(MSE)], col = "red", cex = 2, pch = 20)
+```
+
+The optimal degree for the polynomial here is 10th degree with CV TEST MSE:
+
+```{r}
+MSE[which.min(MSE)]
+```
+
+
+Step function
+
+```{r}
+MSE <- rep(NA, 15)
+for (i in 2:15) {
+    Auto$dis_cut <- cut(Auto$displacement, i)
+    fit <- glm(mpg ~ dis_cut, data = Auto)
+    MSE[i] <- cv.glm(Auto, fit, K = 10)$delta[1]
+}
+plot(2:15, MSE[-1], xlab = "Cuts", ylab = "Test MSE", type = "l", main = "# Cuts vs Test MSE")
+points(which.min(MSE), MSE[which.min(MSE)], col = "red", cex = 2, pch = 20)
+
+```
+We may see that the error is minimum for 9 cuts with CV TEST MSE
+
+```{r}
+MSE[which.min(MSE)]
+```
+
+
+Spline functions
+
+```{r}
+library(splines)
+MSE <- rep(NA, 20)
+for (i in 3:20) {
+    fit <- glm(mpg ~ ns(displacement, df = i), data = Auto)
+    MSE[i] <- cv.glm(Auto, fit, K = 10)$delta[1]
+}
+plot(3:20, MSE[-c(1, 2)], xlab = "degrees of freedom", ylab = "Test MSE", type = "l", main="Test MSE vs Splines degree of freedom")
+d.min <- which.min(MSE)
+points(which.min(MSE), MSE[which.min(MSE)], col = "red", cex = 2, pch = 20)
+
+```
+We may see that the error is minimum for 9 degrees of freedom with CV TEST MSE
+
+```{r}
+MSE[which.min(MSE)]
+```
+
+Plotting X vs. the non-linear estimate f^(X)
+```{r}
+    fit <- glm(mpg ~ ns(displacement, df = which.min(MSE)), data = Auto)
+    par(mfrow = c(2,2))
+    plot(fit)
+```
+
+GAM
+
+```{r}
+library(gam)
+fit <- gam(mpg ~ s(displacement, 4) + s(horsepower, 4), data = Auto)
+summary(fit)
+```
+
+```{r}
+library(DAAG)
+lm_fit <- lm(mpg ~ displacement, data = Auto)
+a<-cv.lm(data = Auto, form.lm = formula(mpg ~ displacement),m=10)
+
+```
+
+```{r}
+
+```
+
+```{r}
+
+```
+
+```{r}
+
+```
+
+```{r}
+
+```
+
+```{r}
+
+```
+
+```{r}
+
+```
+
+```{r}
+
+```
+
+```{r}
+
+```
+
+```{r}
+
+```
+
+```{r}
+
+```
+
+```{r}
+
+```
+
+```{r}
+
+```
+
+```{r}
+
+```
+
+```{r}
+
+```
+
+```{r}
+
+```
+
+```{r}
+
+```
+
+```{r}
+
+```
+
+```{r}
+
+```
+
+```{r}
+
+```
+
+```{r}
+
+```
+
+```{r}
+
+```
+
+```{r}
+
+```
+
+```{r}
+
+```

@@ -1,0 +1,152 @@
+---
+title: "HW6p6"
+author: "Sagar Ganapaneni"
+date: "November 15, 2016"
+output: word_document
+---
+
+Generate a response Y and two predictors X1 and X2, with n = 100.
+
+```{r}
+set.seed(12)
+N = 100
+X1 = rnorm(N)
+X2 = rnorm(N)
+e = rnorm(100, sd = 1)
+Y = 1 + 2*X1 + 3*X2 +e
+```
+
+(b) Initialize ??1 to take on a value of your choice. It does not matter
+what value you choose.
+(c) Keeping ??1 fixed, fit the model
+
+```{r}
+b1 <-12
+a <- Y - b1*X1
+b2 <- lm(a ~ X2)$coef[2]
+```
+
+```{r}
+a<- Y - b2*X2
+b1 <- lm(a ~ X1)$coef[2]
+```
+(c)(d)(e)
+Accumulate results of 1000 iterations in the beta arrays.
+
+
+```{r}
+b0 <-rep(NA, 1000)
+for (i in 1:1000) {
+    a = Y - b1[i] * X1
+    b2[i] = lm(a ~ X2)$coef[2]
+    a = Y - b2[i] * X2
+    lm_fit = lm(a ~ X1)
+    if (i < 1000) {
+        b1[i + 1] = lm_fit$coef[2]
+    }
+    b0[i] = lm_fit$coef[1]
+}
+plot(1:1000, b0, type = "l", xlab = "iteration", ylab = "betas", ylim = c(-5, 
+    5), col = "gold")
+lines(1:1000, b1, col = "red")
+lines(1:1000, b2, col = "blue")
+legend("center", c("beta0", "b1", "b2"), lty = 1, col = c("gold", "red", 
+    "blue"))
+
+```
+
+(f)
+
+```{r}
+
+lm_fit = lm(Y ~ X1 + X2)
+plot (1:1000, b0, lwd = 5, type = 'l', xlab = 'Iteration #i', ylab = 'Beta values', ylim = c(-5, 5), col = 'blue')
+lines(1:1000, b1, lwd = 5, col = 'red')
+lines(1:1000, b2, lwd = 5, col = 'gold')
+abline(h = lm_fit$coef[1], lty = 'dotted', lwd = 2, col = rgb(0, 0, 0, alpha = 0.5))
+abline(h = lm_fit$coef[2], lty = 'dotted', lwd = 2, col = rgb(0, 0, 0, alpha = 0.5))
+abline(h = lm_fit$coef[3], lty = 'dotted', lwd = 2, col = rgb(0, 0, 0, alpha = 0.5))
+legend('bottom', c('b0', 'b1', 'b2', 'Multiple regression'), lty = c(1, 1, 1, 2), col = c('blue', 'red', 'gold', 'dark blue'))
+```
+
+```
+
+```{r}
+
+```
+
+```{r}
+
+```
+
+```{r}
+
+```
+
+```{r}
+
+```
+
+```{r}
+
+```
+
+```{r}
+
+```
+
+```{r}
+
+```
+
+```{r}
+
+```
+
+```{r}
+
+```
+
+```{r}
+
+```
+
+```{r}
+
+```
+
+```{r}
+
+```
+
+```{r}
+
+```
+
+```{r}
+
+```
+
+```{r}
+
+```
+
+```{r}
+
+```
+
+```{r}
+
+```
+
+```{r}
+
+```
+
+```{r}
+
+```
+
+```{r}
+
+```

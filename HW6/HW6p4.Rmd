@@ -1,0 +1,169 @@
+---
+title: "Hw6p4"
+author: "Sagar Ganapaneni"
+date: "November 15, 2016"
+output: word_document
+---
+
+(a)
+Use the "poly()" function to fit a cubic polynomial regression to predict "nox" using "dis". Report the regression output, and plot the resulting data and polynomial fits.
+
+```{r}
+set.seed(12)
+par(mfrow = c(1,1))
+
+library(MASS)
+library(boot)
+library(splines)
+df<-Boston
+fit <- lm(nox ~ poly(dis, 3), data = df)
+summary(fit)
+```
+
+```{r}
+dis_range = range(df$dis)
+dis_seq = seq(from = dis_range[1], to = dis_range[2])
+prediction = predict(fit, list(dis = dis_seq))
+plot(nox ~ dis, data = df,col="red")
+lines(dis_seq, prediction, lwd = 2, col = 'blue')
+```
+We may conclude that all polynomial terms are significant.
+
+(b) Plot the polynomial fits for a range of different polynomial degrees (say, from 1 to 10), and report the associated residual sum of squares.
+
+
+```{r}
+RSS <- rep(NA, 10)
+for (i in 1:10) {
+    fit <- lm(nox ~ poly(dis, i), data = Boston)
+    RSS[i] <- sum(fit$residuals^2)
+}
+plot(1:10, RSS, xlab = "Degree", ylab = "RSS", type = "l")
+points(which.min(RSS), RSS[which.min(RSS)], col = "red", cex = 2, pch = 20)
+
+```
+It seems that the RSS decreases with the degree of the polynomial, and so is minimum for a polynomial of degree 10.
+
+
+(c) Perform cross-validation or another approach to select the optimal degree for the polynomial, and explain your results.
+
+```{r}
+
+MSE <- rep(NA, 10)
+for (i in 1:10) {
+    fit <- glm(nox ~ poly(dis, i), data = Boston)
+    MSE[i] <- cv.glm(Boston, fit, K = 10)$delta[1]
+}
+plot(1:10, MSE, xlab = "Degree", ylab = "10 fold CV Error", type = "l")
+points(which.min(MSE), MSE[which.min(MSE)], col = "red", cex = 2, pch = 20)
+
+
+```
+We may see that a polynomial of degree 4 minimizes the test MSE.
+
+(d) Use the "bs()" function to fit a regression spline to predict "nox" using "dis". Report the output for the fit using 7 degrees of freedom (3 knots)
+
+```{r}
+fit <- lm(nox ~ bs(dis, df = 4, knots = c(3, 7, 11)), data = df)
+summary(fit)
+```
+
+```{r}
+pred <- predict(fit, list(dis = dis_seq))
+plot(nox ~ dis, data = Boston, col = "red")
+lines(dis_seq, pred, col = "blue", lwd = 2)
+```
+
+I chose the knots based such that the data was roughly split into even pieces (since dis 's lower limit is ~1 and its upper limit is ~13).
+
+(e)
+Now fit a regression spline for a range of degrees of freedom, and plot the resulting fits and report the resulting RSS. Describe the results obtained.
+
+```{r}
+
+RSS <- rep(NA, 16)
+for (i in 3:16) {
+    fit <- lm(nox ~ bs(dis, df = i), data = Boston)
+    RSS[i] <- sum(fit$residuals^2)
+}
+plot(3:16, RSS[-c(1, 2)], xlab = "Degrees of freedom", ylab = "RSS", type = "l")
+points(which.min(RSS), RSS[which.min(RSS)], col = "red", cex = 2, pch = 20)
+
+```
+We may see that RSS decreases until 14 and then slightly increases after that.
+
+(f) Perform cross-validation or another approach in order to select the best degrees of freedom for a regression spline on this data. Describe your results.
+
+```{r}
+CVError <- rep(NA, 16)
+for (i in 3:16) {
+    fit <- glm(nox ~ bs(dis, df = i), data = Boston)
+    CVError[i] <- cv.glm(Boston, fit, K = 10)$delta[1]
+}
+```
+
+```{r}
+plot(3:16, CVError[-c(1, 2)], xlab = "Degrees of freedom", ylab = "10 fold CV Error", type = "l")
+
+
+```
+
+```{r}
+
+```
+
+```{r}
+
+```
+
+```{r}
+
+```
+
+```{r}
+
+```
+
+```{r}
+
+```
+
+```{r}
+
+```
+
+```{r}
+
+```
+
+```{r}
+
+```
+
+```{r}
+
+```
+
+```{r}
+
+```
+
+```{r}
+
+```
+
+```{r}
+
+```
+
+```{r}
+
+```
+
+```{r}
+
+```
+
+```{r}
+
+```
