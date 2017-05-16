@@ -1,0 +1,99 @@
+---
+title: "HW2"
+output: html_document
+---
+
+
+```{r}
+set.seed(12)
+arrests_complete <- hclust(dist(USArrests), method = "complete")
+plot(arrests_complete,main='Clustering (with complete Linkage)')
+```
+```{r}
+cluster_mapping<- cutree(arrests_complete, 3)
+```
+
+```{r}
+cluster1 <- USArrests[cluster_mapping == 1,]
+cluster2 <- USArrests[cluster_mapping == 2,]
+cluster3 <- USArrests[cluster_mapping == 3,]
+print(cluster1)
+print(cluster2)
+print(cluster3)
+```
+
+```{r}
+USArrests_scalled <- scale(USArrests)
+arrests_scalled_complete <- hclust(dist(USArrests_scalled), method = "complete")
+plot(arrests_scalled_complete,main='Cluster Dendrogram(Complete) with scalled data')
+```
+
+```{r}
+cluster_mapping<- cutree(arrests_scalled_complete, 3)
+cluster1_2 <- USArrests[cluster_mapping == 1,]
+cluster2_2 <- USArrests[cluster_mapping == 2,]
+cluster3_3 <- USArrests[cluster_mapping == 3,]
+print(cluster1_2)
+print(cluster2_2)
+print(cluster3_3)
+```
+
+```{r}
+table(cutree(arrests_complete, 3), cutree(arrests_scalled_complete, 3))
+
+```
+```{r}
+set.seed(12)
+groups <-  c(rep(1, 20), rep(2, 20), rep(3, 20))
+data <- matrix(rnorm(60*50, mean = 0, sd = 0.001), ncol = 50)
+## adding mean shifters
+data[1:20,group=1]<-data[1:20,group=1]+10
+data[21:40,group=2]<- data[21:40,group=2]-10
+data[21:40,group=2]<- data[21:40,group=2]+10
+data[41:60,group=3]<- data[41:60,group=3]-10
+
+```
+```{r}
+data_pca =prcomp(data, scale =FALSE)
+# Plot the first two principal component score vectors
+plot(data_pca$x[,1:2], col=1:3, pch =19, xlab ="First principal component", ylab="Second principal component")
+```
+```{r}
+
+data_kmeans <- kmeans(data, 3, nstart = 20)
+table(groups, data_kmeans$cluster)
+
+```
+
+```{r}
+## 2 Cluster
+data_kmeans <- kmeans(data, 2, nstart = 20)
+table(groups, data_kmeans$cluster)
+```
+```{r}
+## 4 Cluster
+data_kmeans <- kmeans(data, 4, nstart = 20)
+table(groups, data_kmeans$cluster)
+
+```
+```{r}
+## kmeans over pca PCA vectors
+data_kmeans <- kmeans(data_pca$x[,1:2], 3, nstart = 20)
+table(groups, data_kmeans$cluster)
+
+```
+```{r}
+## kmeans over scalled data
+data_kmeans <- kmeans(scale(data), 3, nstart = 20)
+table(groups, data_kmeans$cluster)
+
+```
+```{r}
+
+```
+```{r}
+
+```
+```{r}
+
+```

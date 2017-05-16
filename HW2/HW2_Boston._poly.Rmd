@@ -1,0 +1,60 @@
+---
+output: word_document
+---
+```{r}
+library(MASS)
+attach(Boston)
+poly_model_zn <- lm(crim ~ poly(zn))
+summary(poly_model_zn)
+```
+```{r}
+poly_model_indus <- lm(crim ~ poly( indus))
+summary(poly_model_indus)
+```
+
+```{r}
+poly_model_nox <- lm(crim ~ poly( nox))
+summary(poly_model_nox)
+
+```
+```{r}
+poly_model_rm <- lm(crim ~ poly( rm))
+summary(poly_model_rm)
+
+```
+```{r}
+poly_model_age <- lm(crim ~ poly( age))
+summary(poly_model_age)
+```
+```{r}
+poly_model_dis <- lm(crim ~ poly( dis))
+summary(poly_model_dis)
+```
+```{r}
+poly_model_rad <- lm(crim ~ poly( rad))
+summary(poly_model_rad)
+
+```
+```{r}
+poly_model_tax <- lm(crim ~ poly( tax))
+summary(poly_model_tax)
+```
+```{r}
+poly_model_ptratio <- lm(crim ~ poly( ptratio))
+summary(poly_model_ptratio)
+
+```
+```{r}
+poly_model_black <- lm(crim ~ poly( black))
+summary(poly_model_black)
+```
+
+```{r}
+poly_model_lstat <- lm(crim ~ poly( lstat))
+summary(poly_model_lstat)
+
+```
+```{r}
+poly_model_medv <- lm(crim ~ poly( medv))
+summary(poly_model_medv)
+```

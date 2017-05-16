@@ -1,0 +1,101 @@
+```{r}
+library(ISLR)
+data(Auto)
+pairs(Auto, main='Scatterplot for Auto Data')
+
+```
+
+```{r}
+cor(Auto[1:8])
+
+```
+
+
+```{r}
+lm_fit <- lm(mpg ~ . - name, data = Auto)
+summary(lm_fit)
+```
+
+```{r}
+par(mfrow = c(2, 2))
+plot(lm_fit)
+```
+
+```{r}
+
+set.seed(1)
+x1 <- runif(100)
+x2 <- 0.5 * x1 + rnorm(100)/10
+y <- 2 + 2 * x1 + 0.3 * x2 + rnorm(100)
+
+```
+
+```{r}
+cor(x1, x2)
+
+```
+
+```{r}
+plot(x1, x2)
+
+```
+
+```{r}
+Model <- lm(y ~ x1 + x2)
+summary(Model)
+```
+
+```{r}
+Model1 <- lm(y ~ x1)
+summary(Model1)
+```
+
+
+
+```{r}
+Model2 <- lm(y ~ x2)
+summary(Model2)
+```
+
+
+```{r}
+x1 <- c(x1, 0.1)
+x2 <- c(x2, 0.8)
+y <- c(y, 6)
+```
+
+
+```{r}
+Model_new <- lm(y ~ x1 + x2)
+Model1_new <- lm(y ~ x1)
+Model2_new <- lm(y ~ x2)
+```
+
+
+```{r}
+summary(Model_new)
+```
+```{r}
+summary(Model1_new)
+```
+```{r}
+summary(Model2_new)
+```
+
+```{r}
+par(mfrow = c(2, 2))
+plot(Model_new)
+```
+
+```{r}
+par(mfrow = c(2, 2))
+plot(Model1_new)
+```
+
+```{r}
+par(mfrow = c(2, 2))
+plot(Model2_new)
+```
+
+```{r}
+```

@@ -1,0 +1,102 @@
+---
+output: word_document
+---
+```{r}
+library(MASS)
+attach(Boston)
+model_zn <- lm(crim ~ zn)
+summary(model_zn)
+```
+```{r}
+model_indus <- lm(crim ~ indus)
+summary(model_indus)
+```
+```{r}
+chas <- as.factor(chas)
+model_chas <- lm(crim ~ chas)
+summary(model_chas)
+```
+```{r}
+model_nox <- lm(crim ~ nox)
+summary(model_nox)
+
+```
+```{r}
+model_rm <- lm(crim ~ rm)
+summary(model_rm)
+
+```
+```{r}
+model_age <- lm(crim ~ age)
+summary(model_age)
+```
+```{r}
+model_dis <- lm(crim ~ dis)
+summary(model_dis)
+```
+```{r}
+model_rad <- lm(crim ~ rad)
+summary(model_rad)
+
+```
+```{r}
+model_tax <- lm(crim ~ tax)
+summary(model_tax)
+```
+```{r}
+model_ptratio <- lm(crim ~ ptratio)
+summary(model_ptratio)
+
+```
+```{r}
+model_black <- lm(crim ~ black)
+summary(model_black)
+```
+
+```{r}
+model_lstat <- lm(crim ~ lstat)
+summary(model_lstat)
+
+```
+```{r}
+model_medv <- lm(crim ~ medv)
+summary(model_medv)
+```
+```{r}
+model_all <- lm(crim ~ ., data = Boston)
+summary(model_all)
+```
+
+```{r}
+simple_reg <- vector("numeric",0)
+simple_reg <- c(simple_reg, model_zn$coefficient[2])
+simple_reg <- c(simple_reg, model_indus$coefficient[2])
+simple_reg <- c(simple_reg, model_chas$coefficient[2])
+simple_reg <- c(simple_reg, model_nox$coefficient[2])
+simple_reg <- c(simple_reg, model_rm$coefficient[2])
+simple_reg <- c(simple_reg, model_age$coefficient[2])
+simple_reg <- c(simple_reg, model_dis$coefficient[2])
+simple_reg <- c(simple_reg, model_rad$coefficient[2])
+simple_reg <- c(simple_reg, model_tax$coefficient[2])
+simple_reg <- c(simple_reg, model_ptratio$coefficient[2])
+simple_reg <- c(simple_reg, model_black$coefficient[2])
+simple_reg <- c(simple_reg, model_lstat$coefficient[2])
+simple_reg <- c(simple_reg, model_medv$coefficient[2])
+mult_reg <- vector("numeric", 0)
+mult_reg <- c(mult_reg, model_all$coefficients)
+mult_reg <- mult_reg[-1]
+plot(simple_reg, mult_reg, col = "green")
+
+```
+
+```{r}
+cor(Boston[-c(1, 4)])
+
+```
+```{r}
+
+```
+```{r}
+
+```
+
