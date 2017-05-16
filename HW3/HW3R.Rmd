@@ -1,0 +1,182 @@
+---
+output: word_document
+---
+
+(a) Create a binary variable, mpg01, that contains a 1 if mpg contains
+a value above its median, and a 0 if mpg contains a value below
+its median.
+
+```{r}
+library(ISLR)
+rm(Auto)
+attach(Auto)
+Auto$mpg01 <- 0
+Auto[mpg > median(mpg),]$mpg01 <- 1
+```
+
+(b)Explore the data graphically in order to investigate the association
+between mpg01 and the other features. Which of the other
+features seem most likely to be useful in predicting mpg01?
+
+
+```{r}
+pairs(Auto)
+cor(Auto[,-9])
+```
+
+
+```{r}
+boxplot(cylinders ~ mpg01, data = Auto, main = "Cylinders vs mpg01")
+```
+
+
+
+```{r}
+boxplot(displacement ~ mpg01, data = Auto, main = "Displacement vs mpg01")
+```
+
+
+
+```{r}
+boxplot(horsepower ~ mpg01, data = Auto, main = "Horsepower vs mpg01")
+```
+
+
+
+```{r}
+boxplot(weight ~ mpg01, data = Auto, main = "Weight vs mpg01")
+```
+
+
+
+```{r}
+boxplot(acceleration ~ mpg01, data = Auto, main = "Acceleration vs mpg01")
+```
+
+```{r}
+boxplot(year ~ mpg01, data = Auto, main = "Year vs mpg01")
+```
+
+
+(c) Split the data into a training set and a test set.
+
+
+```{r}
+## add rnum coloumn
+Auto$rnum<-seq(1,nrow(Auto),1)
+## split data
+Auto_train <- Auto[Auto$rnum %% 2 ==0, ]
+Auto_test<- Auto[Auto$rnum %% 2 !=0, ]
+##drop runm coloumn
+Auto_train<-Auto_train[,!(names(Auto_train)  %in% c("rnum"))]
+Auto_test<-Auto_test[,!(names(Auto_test) %in% c("rnum"))]
+Auto<-Auto[,!(names(Auto)  %in% c("rnum"))]
+
+```
+(d)Perform LDA on the training data in order to predict "mpg01" using the variables that seemed most associated with "mpg01" in (b). What is the test error of the model obtained ?
+
+```{r}
+library(MASS)
+lda_model <- lda(mpg01 ~ cylinders + weight + displacement + horsepower, data = Auto_train)
+lda_model
+
+```
+
+```{r}
+lda_pred <- predict(lda_model, Auto_test)
+table(lda_pred$class, Auto_test$mpg01)
+
+```
+```{r}
+mean(lda_pred$class !=Auto_test$mpg01)
+```
+Hence the error rate is 
+
+(e)Perform QDA on the training data in order to predict "mpg01" 
+```{r}
+qda_model <- qda(mpg01 ~ cylinders + weight + displacement + horsepower, data = Auto_train)
+qda_model
+
+```
+```{r}
+qda_pred <- predict(qda_model, Auto_test)
+table(qda_pred$class, Auto_test$mpg01)
+
+```
+```{r}
+
+mean(qda_pred$class != Auto_test$mpg01)
+
+```
+Hence the error rate with QDA model is     which is higher/lower compared to LDA
+
+(f)Perform logistic regression on the training data in order to predict "mpg01"
+
+```{r}
+
+glm_model <- glm(mpg01 ~ cylinders + weight + displacement + horsepower, data = Auto_train, family = binomial)
+summary(glm_model)
+```
+
+```{r}
+ods <- predict(glm_model, Auto_test, type = "response")
+glm_pred <- rep(0, length(ods))
+glm_pred[ods > 0.5] <- 1
+table(glm_pred, Auto_test$mpg01)
+
+```
+```{r}
+mean(glm_pred != Auto_test$mpg01)
+
+```
+Test Error rate here is:
+
+(g)Perform KNN on the training data, with several values of KK, in order to predict "mpg01" 
+
+```{r}
+set.seed(12)
+library(class)
+## with K =5
+knn_pred <- knn(Auto_train[,c("cylinders", "weight", "displacement", "horsepower")], Auto_test[,c("cylinders", "weight", "displacement", "horsepower")], Auto_train$mpg01, k = 5)
+table(knn_pred, Auto_test$mpg01)
+
+```
+```{r}
+mean(knn_pred != Auto_test$mpg01)
+
+
+```
+```{r}
+## with K =10
+knn_pred <- knn(Auto_train[,c("cylinders", "weight", "displacement", "horsepower")], Auto_test[,c("cylinders", "weight", "displacement", "horsepower")], Auto_train$mpg01, k = 10)
+table(knn_pred, Auto_test$mpg01)
+
+```
+```{r}
+mean(knn_pred != Auto_test$mpg01)
+
+```
+```{r}
+## with K =100
+knn_pred <- knn(Auto_train[,c("cylinders", "weight", "displacement", "horsepower")], Auto_test[,c("cylinders", "weight", "displacement", "horsepower")], Auto_train$mpg01, k = 100)
+table(knn_pred, Auto_test$mpg01)
+
+```
+```{r}
+mean(knn_pred != Auto_test$mpg01)
+
+
+```
+
+```{r}
+## with K =125
+knn_pred <- knn(Auto_train[,c("cylinders", "weight", "displacement", "horsepower")], Auto_test[,c("cylinders", "weight", "displacement", "horsepower")], Auto_train$mpg01, k =125)
+table(knn_pred, Auto_test$mpg01)
+
+```
+```{r}
+mean(knn_pred != Auto_test$mpg01)
+
+
+```
+For KNN with K=125, the error rate is lower, hence  better performace model

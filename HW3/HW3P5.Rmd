@@ -1,0 +1,164 @@
+---
+title: "HW3#5"
+output: word_document
+---
+
+
+(a)Produce some numerical and graphical summaries of the Weekly
+data. Do there appear to be any patterns?
+
+```{r}
+library(ISLR)
+summary(Weekly)
+```
+
+```{r}
+pairs(Weekly)
+```
+
+
+```{r}
+cor(Weekly[,-9])
+
+```
+Thera is high correlation between Year and Volume, lets plot bivariate plot for these variables
+
+```{r}
+attach(Weekly)
+plot(Year,Volume)
+```
+Median volume is increasing each year 
+
+(b)Use the full data set to perform a logistic regression with
+Direction as the response and the five lag variables plus Volume
+as predictors.
+
+```{r}
+glm_model <- glm(Direction ~ Lag1 + Lag2 + Lag3 + Lag4 + Lag5 + Volume, data = Weekly, family = binomial)
+summary(glm_model)
+```
+
+## findings 
+
+(c)Compute the confusion matrix and overall fraction of correct predictions. Explain what the confusion matrix is telling you about the types of mistakes made by logistic regression.
+
+```{r}
+ods <- predict(glm_model, type = "response")
+glm_pred <- rep("Down", length(ods))
+glm_pred[ods > 0.5] <- "Up"
+table(glm_pred, Direction)
+
+```
+## findings 
+
+(d)Now fit the logistic regression model using a training data period from 1990 to 2008, with "Lag2" as the only predictor. Compute the confusion matrix and the overall fraction of correct predictions for the held out data (that is, the data from 2009 to 2010).
+
+```{r}
+Weekly_Pre2009 <- Weekly[Year<2009, ]
+Weekly_Post2009 <- Weekly[Year>2008, ]
+glm_model <- glm(Direction ~ Lag2, data = Weekly_Pre2009, family = binomial)
+summary(glm_model)
+```
+
+##findings
+
+```{r}
+ods <- predict(glm_model, Weekly_Post2009, type = "response")
+glm_pred <- rep("Down", length(ods))
+glm_pred[ods > 0.5] <- "Up"
+table(glm_pred, Weekly_Post2009$Direction)
+```
+## findings
+(e)Repeat (d) using LDA.
+
+```{r}
+library(MASS)
+lda_model <- lda(Direction ~ Lag2, data = Weekly_Pre2009)
+lda_model
+```
+
+```{r}
+lda_pred <- predict(lda_model, Weekly_Post2009)
+table(lda_pred$class, Weekly_Post2009$Direction)
+
+```
+## findings 
+
+(f) Repeat (d) using QDA.
+```{r}
+qda_model <- qda(Direction ~ Lag2, data = Weekly_Pre2009)
+qda_model
+
+```
+```{r}
+qda_pred <- predict(qda_model, Weekly_Post2009)
+table(qda_pred$class, Weekly_Post2009$Direction)
+
+```
+## findings
+
+(g) Repeat (d) using KNN with K=1
+
+```{r}
+set.seed(12)
+library(class)
+## with K =5
+knn_pred <- knn(as.matrix(Weekly_Pre2009[,c("Lag2")]), as.matrix(Weekly_Post2009[,c("Lag2")]), Weekly_Pre2009$Direction, k = 1)
+table(knn_pred, Weekly_Post2009$Direction)
+
+```
+## findings
+
+(i) examine whether it is worth to include interactions via a forward selection scheme for LDA, which greedily minimizes the test error as it adds variables to the model one at a time. 
+```{r}
+library(MASS)
+## step 1
+lda_model <- lda(Direction ~ Lag2, data = Weekly_Pre2009)
+lda_model
+```
+
+```{r}
+lda_pred <- predict(lda_model, Weekly_Post2009)
+table(lda_pred$class, Weekly_Post2009$Direction)
+mean(lda_pred$class !=Weekly_Post2009$Direction)
+
+```
+
+```{r}
+library(MASS)
+## step 2
+lda_model <- lda(Direction ~ Lag2:Lag3, data = Weekly_Pre2009)
+lda_model
+```
+
+```{r}
+lda_pred <- predict(lda_model, Weekly_Post2009)
+table(lda_pred$class, Weekly_Post2009$Direction)
+mean(lda_pred$class !=Weekly_Post2009$Direction)
+
+```
+
+```{r}
+library(MASS)
+## step 3
+lda_model <- lda(Direction ~ Lag2:Lag4, data = Weekly_Pre2009)
+lda_model
+```
+
+```{r}
+lda_pred <- predict(lda_model, Weekly_Post2009)
+table(lda_pred$class, Weekly_Post2009$Direction)
+mean(lda_pred$class !=Weekly_Post2009$Direction)
+
+```
+```{r}
+library(MASS)
+## step 4
+lda_model <- lda(Direction ~ Lag2:Lag5, data = Weekly_Pre2009)
+lda_model
+```
+
+```{r}
+lda_pred <- predict(lda_model, Weekly_Post2009)
+table(lda_pred$class, Weekly_Post2009$Direction)
+mean(lda_pred$class !=Weekly_Post2009$Direction)
